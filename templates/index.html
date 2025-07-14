@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Live Stream HLS</title>
-    <!-- 1. Incluir a biblioteca hls.js -->
+    <!-- 1. Inclui a biblioteca hls.js a partir de um CDN -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #121212; }
+        body { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #121212; color: #fff; font-family: sans-serif; }
+        h1 { margin-bottom: 20px; }
         video { width: 80%; max-width: 900px; border: 2px solid #333; }
     </style>
 </head>
 <body>
+    <h1>zyley</h1>
 
-    <!-- 2. Usar uma tag <video> em vez de <img> -->
+    <!-- 2. A tag <video> que irá tocar o stream -->
     <video id="video" controls autoplay muted></video>
 
     <script>
-        // 3. Configurar o player hls.js
+        // 3. Script para configurar o player hls.js
         var video = document.getElementById('video');
-        // Substitua pela URL do seu manifesto HLS
-        var videoSrc = 'http://seu-servidor-ip:8080/hls/stream.m3u8'; 
+        
+        // --- ATENÇÃO: Substitua pelo seu domínio real ---
+        // Esta URL aponta diretamente para o seu servidor Nginx na VPS
+        var videoSrc = 'https://stream.delfosapp.com/hls/stream.m3u8'; 
 
         if (Hls.isSupported()) {
             var hls = new Hls();
@@ -29,13 +33,12 @@
                 video.play();
             });
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            // Suporte nativo em dispositivos Apple (Safari)
+            // Suporte nativo para HLS em dispositivos Apple (Safari)
             video.src = videoSrc;
             video.addEventListener('loadedmetadata', function() {
                 video.play();
             });
         }
     </script>
-
 </body>
 </html>
