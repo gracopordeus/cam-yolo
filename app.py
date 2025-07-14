@@ -11,9 +11,7 @@ app.logger.handlers = gunicorn_logger.handlers
 app.logger.setLevel(gunicorn_logger.level)
 
 def generate_frames():
-    """Lê frames de um stream RTMP, otimiza a latência, controla o FPS e os envia."""
-    TARGET_FPS = 10
-    TIME_PER_FRAME = 1.0 / TARGET_FPS
+    """Lê frames de um stream RTMP, otimiza a latência."""
     rtmp_url = "rtmp://195.200.0.55/live/stream"
     
     while True:
@@ -58,11 +56,6 @@ def generate_frames():
             frame_bytes = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-            
-            processing_time = time.time() - start_time
-            sleep_time = TIME_PER_FRAME - processing_time
-            if sleep_time > 0:
-                time.sleep(sleep_time)
         
         camera.release()
         app.logger.info("Objeto da câmera liberado. Aguardando para reconectar.")
