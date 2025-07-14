@@ -8,7 +8,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 def generate_frames():
-    rtmp_url = "rtmp://195.200.0.55:8080/live/stream"
+    rtmp_url = "rtmp://195.200.0.55/live/stream"
     app.logger.info(f"Attempting to connect to RTMP stream at {rtmp_url}")
     camera = cv2.VideoCapture(rtmp_url)
 
