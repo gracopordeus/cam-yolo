@@ -11,7 +11,7 @@ app.logger.handlers = gunicorn_logger.handlers
 app.logger.setLevel(gunicorn_logger.level)
 
 def generate_frames():
-    """Lê frames de um stream RTMP, controla o FPS e os envia."""
+    """Lê frames de um stream RTMP, otimiza a latência, controla o FPS e os envia."""
     TARGET_FPS = 10
     TIME_PER_FRAME = 1.0 / TARGET_FPS
     rtmp_url = "rtmp://195.200.0.55/live/stream"
@@ -29,7 +29,16 @@ def generate_frames():
         
         while True:
             start_time = time.time()
-            success, frame = camera.read()
+            
+            # --- OTIMIZAÇÃO DE LATÊNCIA ---
+            # Pega (e descarta) alguns frames para limpar o buffer interno do OpenCV.
+            # O número de grabs pode ser ajustado. 2-4 é geralmente um bom valor.
+            for _ in range(2):
+                camera.grab()
+            
+            # Agora, recupera o frame mais recente.
+            success, frame = camera.retrieve()
+            # -----------------------------
 
             if not success:
                 app.logger.warning("Falha ao ler o frame. Reconectando...")
@@ -62,17 +71,11 @@ def generate_frames():
 @app.route('/video_feed')
 def video_feed():
     """Rota que serve o stream de vídeo."""
-    # Criamos o objeto de resposta com o nosso gerador de frames
     response = Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-    
-    # --- CORREÇÃO DO PROXY BUFFERING ---
-    # Adicionamos os cabeçalhos para instruir proxies (como Nginx) a não fazer buffer da resposta.
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
-    response.headers['X-Accel-Buffering'] = 'no' # Instrução específica para Nginx
-    # ------------------------------------
-    
+    response.headers['X-Accel-Buffering'] = 'no'
     return response
 
 @app.route('/')
