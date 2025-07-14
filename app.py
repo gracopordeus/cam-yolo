@@ -31,29 +31,22 @@ def generate_frames():
 
         app.logger.info("Sucesso! Conectado ao stream RTMP.")
 
-        last_frame_time = time.time()
         while True: # Loop para ler os frames do stream conectado
-            
-            # --- CONTROLE DE FPS (Início) ---
             start_time = time.time()
-            # --------------------------------
 
-            app.logger.info("==> Loop: Tentando ler um frame da câmera...")
             success, frame = camera.read()
 
             if not success:
                 app.logger.warning("Falha ao ler o frame do stream. A conexão pode ter sido perdida. Tentando reconectar...")
                 break 
 
-            app.logger.info("Frame lido com sucesso. Redimensionando...")
-            
             try:
+                # --- OTIMIZAÇÃO CRÍTICA ---
                 frame_resized = cv2.resize(frame, (640, 480))
             except Exception as e:
                 app.logger.error(f"Erro ao redimensionar o frame: {e}")
                 continue
 
-            app.logger.info("Frame redimensionado. Codificando para JPEG...")
             ret, buffer = cv2.imencode('.jpg', frame_resized)
 
             if not ret:
@@ -61,7 +54,6 @@ def generate_frames():
                 continue
 
             frame_bytes = buffer.tobytes()
-            app.logger.info(f"Frame codificado com sucesso ({len(frame_bytes)} bytes). Enviando para o cliente...")
 
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
@@ -70,12 +62,11 @@ def generate_frames():
             processing_time = time.time() - start_time
             sleep_time = TIME_PER_FRAME - processing_time
             if sleep_time > 0:
-                app.logger.info(f"Processamento rápido. Pausando por {sleep_time:.4f} segundos para manter {TARGET_FPS} FPS.")
                 time.sleep(sleep_time)
-            # -------------------------------
         
         camera.release()
-        app.logger.info("Objeto da câmera liberado.")
+        app.logger.info("Objeto da câmera liberado. Aguardando para reconectar.")
+        time.sleep(5) # Pausa antes de tentar reconectar
 
 @app.route('/video_feed')
 def video_feed():
