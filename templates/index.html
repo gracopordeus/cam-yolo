@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <h1>zyley</h1>
+    <h1>Meu Stream ao Vivo</h1>
 
     <!-- 2. A tag <video> que irá tocar o stream -->
     <video id="video" controls autoplay muted></video>
@@ -21,8 +21,9 @@
         // 3. Script para configurar o player hls.js
         var video = document.getElementById('video');
         
-        // --- ATENÇÃO: Substitua pelo seu domínio real ---
-        // Esta URL aponta diretamente para o seu servidor Nginx na VPS
+        // --- URL CORRIGIDA ---
+        // Apontando para o domínio correto, conforme configurado no EasyPanel.
+        // Assumindo que seu domínio completo é delfosapp.com.
         var videoSrc = 'https://stream.delfosapp.com/hls/stream.m3u8'; 
 
         if (Hls.isSupported()) {
