@@ -1,9 +1,35 @@
-<html>
-  <head>
-    <title>Video Stream</title>
-  </head>
-  <body>
-    <h1>Video Stream</h1>
-    <img src="{{ url_for('video_feed') }}">
-  </body>
+<!-- Por favor, cole o conteúdo do seu arquivo index.html aqui -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stream</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        img {
+            border: 2px solid #333;
+            border-radius: 8px;
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Live Stream da Câmera</h1>
+        <!-- A tag de imagem deve apontar para a rota /video_feed -->
+        <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    </div>
+</body>
 </html>
