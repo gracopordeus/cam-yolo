@@ -4,7 +4,7 @@ import cv2
 app = Flask(__name__)
 
 def generate_frames():
-    camera = cv2.VideoCapture("rtmp://195.200.0.55/live/stream")  # Use the RTMP stream
+    camera = cv2.VideoCapture("rtmp://195.200.0.55:8080/live/stream")  # Use the RTMP stream
     while True:
         success, frame = camera.read()
         if not success:
